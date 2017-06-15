@@ -3,7 +3,7 @@
 # We determine the role by following order, stopping at the first
 # defined value:
 #   * provided parameter (or hiera)
-#   * Global (scoped) variable or fact named `role`
+#   * An fact named $fact_name
 #   * 'default'
 #
 # The role name does not need to include the namespace '::role'
@@ -17,6 +17,7 @@
 #   If undef, the role name will be the class to include.
 #   Otherwise, the $separator will be used to glue it with the namespace.
 # @param separator Anything to put in between the namespace and the role.
+# @param factname Name of the fact that contains the role.
 # @param default_role the default role to assume.
 # @param default_namespace namespace to use if the default is used.
 # @param default_separator separator to use if the default is used.
@@ -24,6 +25,7 @@ class role (
   Optional[String] $role      = undef,
   Optional[String] $namespace = '::role',
   String           $separator = '::',
+  String           $factname  = 'role',
 
   String           $default_role = 'default',
   String           $default_namespace = '::role',
@@ -34,8 +36,8 @@ class role (
     $_role = $role
     $_isdefault = false
   }
-  elsif defined('$::role') {
-    $_role = $role
+  elsif has_key($::facts, $factname) {
+    $_role = $::facts[$factname]
     $_isdefault = false
   }
   else {
