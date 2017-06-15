@@ -1,0 +1,22 @@
+Gemfile.lock
+.bundle/
+vendor/
+tmp/
+bin/
+
+# rvm config files
+.ruby-version
+.ruby-gemset
+.ruby-env
+.rvmrc
+.versions.conf
+
+# puppetlabs-strings ignores:
+doc/
+.yardoc/
+.yardwarns
+.idea
+
+# intellij
+atlassian-ide-plugin.xml
+*.iml
