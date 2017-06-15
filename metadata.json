@@ -1,0 +1,19 @@
+{
+  "name": "vstone-role",
+  "version": "0.0.1",
+  "author": "Jan Vansteenkiste",
+  "summary": "Map roles in different namespaces",
+  "source": "https://github.com/vStone/puppet-role",
+  "license": "MIT",
+  "dependencies": [],
+  "requirements": [
+    {
+      "name": "puppet",
+      "version_requirement": "> 3.0.0 < 5.0.0"
+    }
+  ],
+  "operatingsystem_support": [
+    { "operatingsystem": "Debian", "operatingsystemrelease": ["8"] },
+    { "operatingsystem": "RedHat", "operatingsystemrelease": [ "7.0" ] }
+  ]
+}
