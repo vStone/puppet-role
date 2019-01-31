@@ -1,2 +1,62 @@
 require: rubocop-rspec
 
+AllCops:
+  DisplayCopNames: true
+  TargetRubyVersion: '2.1'
+  Include:
+  - "./**/*.rb"
+  Exclude:
+  - bin/*
+  - ".vendor/**/*"
+  - "**/Gemfile"
+  - "**/Rakefile"
+  - pkg/**/*
+  - spec/fixtures/**/*
+  - vendor/**/*
+  - "**/Puppetfile"
+  - "**/Vagrantfile"
+  - "**/Guardfile"
+
+Metrics/LineLength:
+  Description: People have wide screens, use them.
+  Max: 140
+
+Metrics/BlockLength:
+  Exclude:
+  - spec/**/*
+
+# 'Complexity' is very relative
+Metrics/AbcSize:
+  Exclude:
+  - spec/**/*
+
+# 'Complexity' is very relative
+Metrics/PerceivedComplexity:
+  Exclude:
+  - spec/**/*
+
+RSpec/BeforeAfterAll:
+  Exclude:
+  - spec/acceptance/**/*
+
+# We don't use rspec in this way
+RSpec/DescribeClass:
+  Enabled: False
+
+# Example length is not necessarily an indicator of code quality
+RSpec/ExampleLength:
+  Enabled: False
+
+RSpec/NamedSubject:
+  Enabled: False
+
+RSpec/NestedGroups:
+  Enabled: False
+
+Style/TrailingCommaInArguments:
+  Enabled: True
+  EnforcedStyleForMultiline: consistent_comma
+
+Style/TrailingCommaInLiteral:
+  Enabled: True
+  EnforcedStyleForMultiline: consistent_comma
