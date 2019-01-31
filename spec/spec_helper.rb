@@ -10,7 +10,7 @@ if Dir.exist?(File.expand_path('../../lib', __FILE__))
   SimpleCov.formatters = [
     SimpleCov::Formatter::HTMLFormatter,
     SimpleCov::Formatter::Console,
-    Coveralls::SimpleCov::Formatter
+    Coveralls::SimpleCov::Formatter,
   ]
   SimpleCov.start do
     track_files 'lib/**/*.rb'
@@ -21,11 +21,11 @@ if Dir.exist?(File.expand_path('../../lib', __FILE__))
 end
 
 default_facts = {
-  :puppetversion => Puppet.version,
-  :facterversion => Facter.version,
+  puppetversion: Puppet.version,
+  facterversion: Facter.version,
 }
 
 RSpec.configure do |c|
   c.default_facts = default_facts
-	# c.hiera_config = 'hiera.yaml'
+  # c.hiera_config = 'hiera.yaml'
 end
