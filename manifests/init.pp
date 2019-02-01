@@ -1,44 +1,45 @@
 # Assigns the correct role to each node.
 #
-# We determine the role by following order, stopping at the first
-# defined value:
-#   * provided parameter (or hiera)
-#   * An fact named $fact_name
-#   * 'default'
-#
-# The role name does not need to include the namespace '::role'
-#
 # It acts as a proxy which allows you to store your roles in a different namespaced
 # module. For a single host, you can also use a specific configuration (upstream / shared
-# roles and profiles for example. It's not a thing yet, but it will happen.
+# roles and profiles).
+#
+# To get started, you should define the namespace to use.
+#
+# @param namespace The module namespace that holds your roles. If you are not using namespaces and map
+#   roles directly to class names, make this an empty string ('').
+# @param separator Anything to put in between the namespace and the role.
+# @param resolve_order The order in which we will be looking for the correct
+#   role to use. Currently supported values are:
+#   * `trusted`: Use a trusted fact. The name must be configured using `trusted_extension_name`.
+#   * `fact`: Use a fact. The name must be configured using `fact_name`.
+#   * `param`: Uses the provided `role` parameter. This can also be used to configure using hiera.
+#   * `callback`: Use a function callback. The function must be configured using `function_callback_name`.
+#   * `default`: Fall back to the default value. You would typically put this after other methods.
+#   * `fail`: Fail the run if this method is reached. This enforces setting up a role and skips using the default role.
 #
 # @param role The role this node should get.
-# @param namespace The module namespace that holds your roles.
-#   If undef, the role name will be the class to include.
-#   Otherwise, the $separator will be used to glue it with the namespace.
-# @param separator Anything to put in between the namespace and the role.
+# @param trusted_extension_name Name of the trusted fact (extension).
 # @param fact_name Name of the fact that contains the role.
+# @param function_callback_name A function that returns the role.
 #
 # @param default_role the default role to assume.
 # @param default_namespace namespace to use if the default is used.
 # @param default_separator separator to use if the default is used.
 #
 class role (
-  Optional[String[1]] $role      = undef,
+  String $namespace,
+  String $separator = '::',
+  Array[Role::ResolveMethod] $resolve_order = ['param', 'default'],
 
-  Optional[String[1]] $trusted_extension_name           = undef,
+  Optional[String[1]] $role                   = undef,
+  Optional[String[1]] $trusted_extension_name = undef,
   Optional[String[1]] $fact_name              = undef,
   Optional[String[1]] $function_callback_name = undef,
 
-  String           $namespace = '',
-  String           $separator = '::',
-
-  String           $default_role = 'default',
-  String           $default_namespace = '::role',
-  String           $default_separator = '::',
-
-  Array[Role::ResolveMethod] $resolve_order = ['default'],
-  #Array[Role::ResolveMethod] $resolve_order = ['trusted', 'param', 'fact', 'callback', 'default'],
+  String $default_role      = 'default',
+  String $default_namespace = '::role',
+  String $default_separator = '::',
 ) {
 
   # Check if the required 'configuration' is present

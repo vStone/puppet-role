@@ -6,15 +6,74 @@ describe 'role' do
   end
 
   context 'using defaults' do
+    let(:params) do
+      super()
+    end
+
     it { is_expected.to compile }
     it { is_expected.to contain_class('role::default') }
+  end
+
+  context 'namespace configuration' do
+    describe 'missing' do
+      it { is_expected.to compile.and_raise_error(/expects a value for parameter 'namespace'/) }
+    end
+
+    describe 'empty' do
+      let(:pre_condition) do
+        'class foo::bar() {}'
+      end
+      let(:params) do
+        {
+          namespace: '',
+          resolve_order: %w[param default],
+          role: 'foo::bar',
+        }
+      end
+
+      it { is_expected.to contain_class('foo::bar') }
+    end
+
+    describe 'provided' do
+      let(:pre_condition) do
+        'class my_namespace::bar() {}'
+      end
+      let(:params) do
+        {
+          namespace: 'my_namespace',
+          resolve_order: %w[param default],
+          role: 'bar',
+        }
+      end
+
+      it { is_expected.to contain_class('my_namespace::bar') }
+    end
+
+    describe 'separator' do
+      let(:pre_condition) do
+        'class role_bar() {}'
+      end
+      let(:params) do
+        {
+          separator: '_',
+          namespace: 'role',
+          resolve_order: %w[param default],
+          role: 'bar',
+        }
+      end
+
+      it { is_expected.to contain_class('my_namespace_bar') }
+    end
   end
 
   context 'missing configuration parameters' do
     %w[trusted fact callback].each do |method|
       context "with method => #{method}" do
         let(:params) do
-          { resolve_order: [method] }
+          {
+            resolve_order: [method],
+            namespace: 'foobar',
+          }
         end
 
         it do
@@ -25,6 +84,24 @@ describe 'role' do
   end
 
   context 'resolve methods' do
+    context 'default overrides' do
+      let(:pre_condition) do
+        'class custom_roles__default_role {}'
+      end
+      let(:params) do
+        super().merge(
+          resolve_order: ['default'],
+          default_namespace: 'custom_roles',
+          default_role: 'default_role',
+          default_separator: '__',
+        )
+      end
+
+      it do
+        is_expected.to contain_class('custom_roles__default_role')
+      end
+    end
+
     describe 'trusted' do
       let(:trusted_facts) do
         {
