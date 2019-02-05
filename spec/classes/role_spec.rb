@@ -15,6 +15,8 @@ describe 'role' do
   end
 
   context 'namespace configuration' do
+    let(:params) { { } }
+
     describe 'missing' do
       it { is_expected.to compile.and_raise_error(/expects a value for parameter 'namespace'/) }
     end
@@ -62,7 +64,7 @@ describe 'role' do
         }
       end
 
-      it { is_expected.to contain_class('my_namespace_bar') }
+      it { is_expected.to contain_class('role_bar') }
     end
   end
 

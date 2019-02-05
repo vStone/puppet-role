@@ -61,7 +61,6 @@ class role (
         }
         else {
           $resolved = undef
-          next()
         }
       }
       'fact': {
