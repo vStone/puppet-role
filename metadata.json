@@ -1,6 +1,6 @@
 {
   "name": "vstone-role",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": "Jan Vansteenkiste",
   "summary": "Map roles in different namespaces",
   "source": "https://github.com/vStone/puppet-role",

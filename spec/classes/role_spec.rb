@@ -69,7 +69,8 @@ describe 'role' do
   end
 
   context 'missing configuration parameters' do
-    %w[trusted fact callback].each do |method|
+    #%w[trusted fact callback].each do |method|
+    %w[trusted fact].each do |method|
       context "with method => #{method}" do
         let(:params) do
           {
@@ -151,25 +152,26 @@ describe 'role' do
       end
     end
 
-    describe 'callback' do
-      let(:params) do
-        super().merge(
-          resolve_order: ['callback'],
-          function_callback_name: 'my_roles::role_callback',
-        )
-      end
+    # describe 'callback' do
+    #   let(:params) do
+    #     super().merge(
+    #       resolve_order: ['callback'],
+    #       function_callback_name: 'my_roles::role_callback',
+    #     )
+    #   end
 
-      it do
-        is_expected.to contain_class('my_roles::function_role')
-      end
-    end
+    #   it do
+    #     is_expected.to contain_class('my_roles::function_role')
+    #   end
+    # end
   end
 
   context 'resolve ordering' do
     context 'skip until match is found' do
       let(:params) do
         super().merge(
-          resolve_order: %w[trusted fact param callback],
+          #resolve_order: %w[trusted fact param callback],
+          resolve_order: %w[trusted fact param],
           role: 'param_role',
           trusted_extension_name: 'pp_role',
           fact_name: 'role',
