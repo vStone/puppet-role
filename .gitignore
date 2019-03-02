@@ -4,6 +4,8 @@ vendor/
 tmp/
 bin/
 
+spec/fixtures/modules/
+
 # rvm config files
 .ruby-version
 .ruby-gemset
