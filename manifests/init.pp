@@ -73,8 +73,7 @@ class role (
       }
       'callback': {
         if $function_callback_name {
-          $deferred = Deferred($function_callback_name)
-          $resolved = $deferred.call()
+          $resolved = call($function_callback_name)
         }
         else {
           $resolved = undef
