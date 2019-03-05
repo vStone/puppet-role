@@ -1,0 +1,11 @@
+---
+spec/spec_helper.rb:
+  mock_with: ':rspec'
+
+appveyor.yml:
+  delete: true
+.gitlab-ci.yml:
+  delete: true
+.gitignore:
+  paths:
+    - vendor/

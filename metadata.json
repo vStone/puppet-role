@@ -3,12 +3,27 @@
   "version": "0.1.0",
   "author": "Jan Vansteenkiste",
   "summary": "Map roles in different namespaces",
-  "source": "https://github.com/vStone/puppet-role",
   "license": "MIT",
+  "source": "https://github.com/vStone/puppet-role",
   "dependencies": [
     {
       "name": "puppetlabs-stdlib",
       "version_requirement": ">= 4.0.0"
+    }
+  ],
+  "operatingsystem_support": [
+    {
+      "operatingsystem": "Debian",
+      "operatingsystemrelease": [
+        "8",
+        "9"
+      ]
+    },
+    {
+      "operatingsystem": "RedHat",
+      "operatingsystemrelease": [
+        "7.0"
+      ]
     }
   ],
   "requirements": [
@@ -17,8 +32,7 @@
       "version_requirement": "> 3.0.0 < 7.0.0"
     }
   ],
-  "operatingsystem_support": [
-    { "operatingsystem": "Debian", "operatingsystemrelease": ["8"] },
-    { "operatingsystem": "RedHat", "operatingsystemrelease": [ "7.0" ] }
-  ]
+  "pdk-version": "1.10.0",
+  "template-url": "https://github.com/puppetlabs/pdk-templates#1.10.0",
+  "template-ref": "tags/1.10.0-0-gbba9ac3"
 }
