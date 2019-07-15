@@ -14,13 +14,46 @@ describe 'role' do
     it { is_expected.to contain_class('role::default') }
   end
 
-  context 'namespace configuration' do
-    let(:params) { { } }
-
-    describe 'missing' do
-      it { is_expected.to compile.and_raise_error(/expects a value for parameter 'namespace'/) }
+  context 'parameters' do
+    context 'resolve_order' do
+      describe 'as single value' do
+        let(:params) do
+          super().merge({ resolve_order: 'param', role: 'param_role' })
+        end
+        it do
+          is_expected.to compile
+          is_expected.to contain_class('my_roles::param_role')
+        end
+      end
+      describe 'as an array' do
+        let(:params) do
+          super().merge({ resolve_order: ['param', 'default'], role: 'param_role' })
+        end
+        it do
+          is_expected.to compile
+          is_expected.to contain_class('my_roles::param_role')
+        end
+      end
     end
+    context 'method dependent parameters' do
+      %w[trusted fact callback].each do |method|
+        describe "with method => #{method}" do
+          let(:params) do
+            {
+              resolve_order: [method],
+              namespace: 'foobar',
+            }
+          end
 
+          it do
+            is_expected.to compile.and_raise_error(/expects a String value/)
+          end
+        end
+      end
+    end
+  end
+
+  context 'namespace configuration' do
     describe 'empty' do
       let(:pre_condition) do
         'class foo::bar() {}'
@@ -65,23 +98,6 @@ describe 'role' do
       end
 
       it { is_expected.to contain_class('role_bar') }
-    end
-  end
-
-  context 'missing configuration parameters' do
-    %w[trusted fact callback].each do |method|
-      context "with method => #{method}" do
-        let(:params) do
-          {
-            resolve_order: [method],
-            namespace: 'foobar',
-          }
-        end
-
-        it do
-          is_expected.to compile.and_raise_error(/expects a String value/)
-        end
-      end
     end
   end
 

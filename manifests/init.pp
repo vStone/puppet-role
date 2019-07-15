@@ -30,7 +30,7 @@
 class role (
   String $namespace,
   String $separator = '::',
-  Array[Role::ResolveMethod] $resolve_order = ['param', 'default'],
+  Variant[Role::ResolveMethod, Array[Role::ResolveMethod]] $resolve_order = ['param', 'default'],
 
   Optional[String[1]] $role                   = undef,
   Optional[String[1]] $trusted_extension_name = undef,
@@ -53,7 +53,7 @@ class role (
     assert_type(String[1], $function_callback_name)
   }
 
-  $resolve_array = $resolve_order.map |String $method| {
+  $resolve_array = [$resolve_order].flatten.map |String $method| {
     case $method {
       'param' : {
         if $role {
