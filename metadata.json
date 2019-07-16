@@ -1,10 +1,12 @@
 {
   "name": "vstone-role",
-  "version": "0.2.0",
+  "version": "0.2.1 ",
   "author": "Jan Vansteenkiste",
   "summary": "Map roles in different namespaces",
   "license": "MIT",
   "source": "https://github.com/vStone/puppet-role",
+  "project_page": "https://github.com/vStone/puppet-role",
+  "issues_url": "https://github.com/vStone/puppet-role/issues",
   "dependencies": [
     {
       "name": "puppetlabs-stdlib",
