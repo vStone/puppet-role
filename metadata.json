@@ -5,6 +5,8 @@
   "summary": "Map roles in different namespaces",
   "license": "MIT",
   "source": "https://github.com/vStone/puppet-role",
+  "project_page": "https://github.com/vStone/puppet-role",
+  "issues_url": "https://github.com/vStone/puppet-role/issues",
   "dependencies": [
     {
       "name": "puppetlabs-stdlib",
