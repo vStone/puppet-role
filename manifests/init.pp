@@ -4,10 +4,12 @@
 # module. For a single host, you can also use a specific configuration (upstream / shared
 # roles and profiles).
 #
-# To get started, you should define the namespace to use.
+# To get started, you should define the namespace (or search_namespaces) to use.
 #
 # @param namespace The module namespace that holds your roles. If you are not using namespaces and map
 #   roles directly to class names, make this an empty string ('').
+# @param search_namespaces A list of namespaces to search. If using this, we will attempt to find the
+#   first existing role in order. If no match is found, the puppet run will fail.
 # @param separator Anything to put in between the namespace and the role.
 # @param resolve_order The order in which we will be looking for the correct
 #   role to use. Currently supported values are:
@@ -23,12 +25,12 @@
 # @param fact_name Name of the fact that contains the role.
 # @param function_callback_name A function that returns the role.
 #
-# @param default_role the default role to assume.
+# @param default_role the default role to assume. Used when no resolve method provides a result.
 # @param default_namespace namespace to use if the default is used.
 # @param default_separator separator to use if the default is used.
 #
 class role (
-  String $namespace,
+  Optional[String] $namespace = undef,
   String $separator = '::',
   Variant[Role::ResolveMethod, Array[Role::ResolveMethod]] $resolve_order = ['param', 'default'],
 
@@ -36,6 +38,8 @@ class role (
   Optional[String[1]] $trusted_extension_name = undef,
   Optional[String[1]] $fact_name              = undef,
   Optional[String[1]] $function_callback_name = undef,
+
+  Optional[Array[Role::SearchNamespace]] $search_namespaces = undef,
 
   String $default_role      = 'default',
   String $default_namespace = '::role',
@@ -51,6 +55,9 @@ class role (
   }
   if 'callback' in $resolve_order {
     assert_type(String[1], $function_callback_name)
+  }
+  unless $namespace or ($search_namespaces and size($search_namespaces) > 0) {
+    fail('Either namespace or a not empty search_namespaces must be provided.')
   }
 
   $resolve_array = [$resolve_order].flatten.map |String $method| {
@@ -103,17 +110,28 @@ class role (
   }.filter |$value| { $value =~ NotUndef }
 
   if size($resolve_array) == 0 {
-    $resolved = $default_role
-    $_namespace = $default_namespace
-    $_separator = $default_separator
+    include "${default_namespace}${default_separator}${default_role}"
   } else {
     $resolved = $resolve_array[0]
-    $_namespace = $namespace ? {
-      undef   => '',
-      default => $namespace,
+    if $namespace {
+      include "${namespace}${separator}${resolved}"
     }
-    $_separator = $separator
+    else {
+      # sanitize the array with namespaces
+      $search = role::expand_search_namespaces($separator, $search_namespaces)
+      # find roles with a class that actually exists
+      $existing_roles = $search.map |String $space, String $separator| {
+        $rolename = "${space}${separator}${resolved}"
+        if defined($rolename) { $rolename }
+        else { false }
+      }.filter |$val| {
+        $val =~ String
+      }
+      if size($existing_roles) > 0 {
+        include $existing_roles[0]
+      } else {
+        fail("Requested role '${resolved}' not found on any of the search namespaces.")
+      }
+    }
   }
-
-  include "${_namespace}${_separator}${resolved}"
 }

@@ -23,6 +23,8 @@ figure out the role:
 
 It also allows setting up a waterfall mechanism: no trusted fact? how about a regular one? a param?
 
+You can supply the namespace using hiera or use the search_namespaces mechanism.
+
 ## Setup
 
 ### Setup Requirements
@@ -81,6 +83,38 @@ Enforce setting up a role using trusted facts or fail the puppet run:
 role::resolve_order:
   - trusted
   - fail
+```
+
+### search_namespaces
+
+It is possible to search for a role in multiple namespaces. To do this, supply an (non-empty) array with namespaces to look in.
+
+By example:
+```yaml
+role::separator: '::'
+role::search_namespaces:
+  - shared_roles
+  - my_roles
+  - {'': ''}
+  - {customer: '_'}
+```
+
+The module will attempt to find the following classes (in order) for role `foobar` and use the first one that exists.
+
+- shared_roles::foobar
+- my_roles::foobar
+- foobar
+- customer_foobar
+
+
+**Note**: A namespace parameter will always take precedence. In hiera, you can force a `undef` or `nil` value using `~`.
+
+```yaml
+role::namespace: ~
+role::search_namespaces:
+ - ''
+ - {'my_roles': '::'}
+
 ```
 
 ## Development
