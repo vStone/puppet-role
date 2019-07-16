@@ -1,6 +1,6 @@
 {
   "name": "vstone-role",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": "Jan Vansteenkiste",
   "summary": "Map roles in different namespaces",
   "license": "MIT",
