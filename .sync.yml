@@ -9,3 +9,14 @@ appveyor.yml:
 .gitignore:
   paths:
     - vendor/
+
+Rakefile:
+  extras:
+    - |
+      Rake::Task['rubocop'].clear
+      RuboCop::RakeTask.new(:rubocop) do |task|
+        task.options = [
+          '--config', '.rubocop.yml'
+        ]
+      end
+

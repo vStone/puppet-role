@@ -74,3 +74,10 @@ EOM
   end
 end
 
+Rake::Task['rubocop'].clear
+RuboCop::RakeTask.new(:rubocop) do |task|
+  task.options = [
+    '--config', '.rubocop.yml'
+  ]
+end
+
