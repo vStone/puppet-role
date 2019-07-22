@@ -1,4 +1,6 @@
-# This function is used to sanitize `Role::SearchNamespace`s and return
+# Sanitizes Role::SearchNamespaces for use in `role`.
+#
+# @abstract This function is used to sanitize `Role::SearchNamespace`s and return
 # a single map with namespace - separator entries.
 #
 # @example hiera configured namespaces
