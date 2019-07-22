@@ -113,7 +113,7 @@ describe 'role' do
   end
 
   context 'namespace configuration' do
-    describe 'empty' do
+    describe 'empty string' do
       let(:pre_condition) do
         'class foo::bar() {}'
       end
@@ -131,18 +131,18 @@ describe 'role' do
 
     describe 'provided' do
       let(:pre_condition) do
-        'class my_namespace::bar() {}'
+        'class my_namespace::foo::bar() {}'
       end
 
       let(:params) do
         {
           namespace: 'my_namespace',
           resolve_order: ['param', 'default'],
-          role: 'bar',
+          role: 'foo::bar',
         }
       end
 
-      it { is_expected.to contain_class('my_namespace::bar') }
+      it { is_expected.to contain_class('my_namespace::foo::bar') }
     end
   end
 
