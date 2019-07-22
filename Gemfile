@@ -27,6 +27,15 @@ group :development do
   gem "puppet-module-posix-dev-r#{minor_version}",     require: false, platforms: [:ruby]
   gem "puppet-module-win-default-r#{minor_version}",   require: false, platforms: [:mswin, :mingw, :x64_mingw]
   gem "puppet-module-win-dev-r#{minor_version}",       require: false, platforms: [:mswin, :mingw, :x64_mingw]
+  gem "awesome_print",                                 require: false
+  gem "puppet-lint-leading_zero-check",                require: false
+  gem "puppet-lint-trailing_comma-check",              require: false
+  gem "puppet-lint-version_comparison-check",          require: false
+  gem "puppet-lint-param-docs",                        require: false
+  gem "puppet-lint-unquoted_string-check",             require: false
+end
+group :documentation do
+  gem "redcarpet", require: false
 end
 
 puppet_version = ENV['PUPPET_GEM_VERSION']

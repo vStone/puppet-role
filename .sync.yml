@@ -1,4 +1,16 @@
 ---
+Gemfile:
+  optional:
+    ':development':
+      - gem: awesome_print
+      - gem: puppet-lint-leading_zero-check
+      - gem: puppet-lint-trailing_comma-check
+      - gem: puppet-lint-version_comparison-check
+      - gem: puppet-lint-param-docs
+      - gem: puppet-lint-unquoted_string-check
+    ':documentation':
+      - gem: redcarpet
+
 spec/spec_helper.rb:
   mock_with: ':rspec'
 
