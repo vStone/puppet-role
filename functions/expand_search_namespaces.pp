@@ -1,3 +1,21 @@
+# This function is used to sanitize `Role::SearchNamespace`s and return
+# a single map with namespace - separator entries.
+#
+# @example hiera configured namespaces
+#
+#   ```puppet
+#   $search_namespaces = [
+#     '',
+#     { 'my_roles' => '_' },
+#     'public_roles',
+#   ]
+#   $expanded = role::expand_search_namespaces('::', $search_namespaces)
+#   # => {'' => '::', 'my_roles' => '_', 'public_roles' => '::' }
+#
+#
+# @param separator Default separator to use when the namespace does not provide one.
+# @param search `Role::SearchNamespace`s to expand.
+# @return [Hash[String, String]] Expanded configuration.
 function role::expand_search_namespaces(
   String $separator,
   Variant[Role::SearchNamespace, Array[Role::SearchNamespace]] $search,
