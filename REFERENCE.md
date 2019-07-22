@@ -160,7 +160,6 @@ a single map with namespace - separator entries.
 
 ```puppet
 
-```puppet
 $search_namespaces = [
   '',
   { 'my_roles' => '_' },
@@ -183,7 +182,6 @@ Returns: `Hash[String, String]` Expanded configuration.
 
 ```puppet
 
-```puppet
 $search_namespaces = [
   '',
   { 'my_roles' => '_' },

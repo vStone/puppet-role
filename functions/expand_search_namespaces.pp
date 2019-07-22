@@ -3,7 +3,6 @@
 #
 # @example hiera configured namespaces
 #
-#   ```puppet
 #   $search_namespaces = [
 #     '',
 #     { 'my_roles' => '_' },
