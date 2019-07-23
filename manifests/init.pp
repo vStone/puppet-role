@@ -16,7 +16,7 @@
 #   * `trusted`: Use a trusted fact. The name must be configured using `trusted_extension_name`.
 #   * `fact`: Use a fact. The name must be configured using `fact_name`.
 #   * `param`: Uses the provided `role` parameter. This can also be used to configure using hiera.
-#   * `callback`: Use a function callback. The function must be configured using `function_callback_name`.
+#   * `callback`: Use a function callback. The function must be configured using `function_callback_name`. (Not available on puppet 4.x!)
 #   * `default`: Fall back to the default value. You would typically put this after other methods.
 #   * `fail`: Fail the run if this method is reached. This enforces setting up a role and skips using the default role.
 #
@@ -25,6 +25,10 @@
 # @param fact_name Name of the fact that contains the role.
 # @param function_callback_name A function that returns the role.
 # @param translate_role_callback Optionally, a function name that should be used or a map with gsubstr tuples.
+#   * function name: A puppet function to call.
+#       It should accept a single value and return a string. (Not available on puppet 4.x!)
+#       See `role::translate_slash` and `role::translate_double_underscores` for examples.
+#   * a Hash: A mapping with keypairs that is passed to `role::translate_with_map`.
 #
 # @param default_role the default role to assume. Used when no resolve method provides a result.
 # @param default_namespace namespace to use if the default is used.

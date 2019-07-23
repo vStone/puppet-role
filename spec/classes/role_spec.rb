@@ -134,7 +134,10 @@ describe 'role' do
         super().merge(translate_role_callback: 'role::translate_double_underscores')
       end
 
-      it { is_expected.to contain_class('ns::foo::bar::xyz') }
+      it do
+        skip 'Unsupported on puppet 4.x' if Puppet.version =~ %r{^4\.}
+        is_expected.to contain_class('ns::foo::bar::xyz')
+      end
     end
 
     describe 'with hash map' do
@@ -327,6 +330,7 @@ describe 'role' do
       end
 
       it do
+        skip 'Unsupported in puppet 4.x' if Puppet.version =~ %r{^4\.}
         is_expected.to contain_class('my_roles::function_role')
       end
     end

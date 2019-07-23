@@ -6,8 +6,9 @@
 - [Introduction](#introduction)
 - [Setup](#setup)
     - [Setup Requirements](#setup-requirements)
-    - [Quickstart](#quickstart)
-- [Usage](#usage)
+    - [Compatibility](#compatibility)
+- [Quickstart: Configure your namespace.](#quickstart-configure-your-namespace)
+- [Configuration](#configuration)
     - [resolve_order](#resolve_order)
     - [search_namespaces](#search_namespaces)
 - [Notes](#notes)
@@ -23,14 +24,12 @@ machine. It supports several ways to figure out the role:
 * Use trusted facts
 * Use facts
 * Use a parameter (allows configuration through hiera)
-* Use a custom function
+* Use a custom function (Note, only available on Puppet > 5.x)
 * Fallback to a default
 * or Fail if there is no role found.
 
 It also allows setting up a waterfall mechanism: no trusted fact? how
 about a regular one? a param?
-
-
 
 ## Setup
 
@@ -46,7 +45,15 @@ about:
 On a puppet side: we depend on the stdlib module for additional
 functions.
 
-### Quickstart
+### Compatibility
+
+Most functionality should be usable with > puppet 4.x with
+the exception of features that depend on #call().
+
+* `callback` in `role::resolve_order` is not supported on puppet < 5.x
+* using a function name as `role::translate_role_callback` is not supported on puppet < 5.x
+
+## Quickstart: Configure your namespace.
 
 Include role in your (default) node.
 
@@ -67,7 +74,20 @@ Configure the namespace to use in hiera:
 role::namespace: '::my_roles'
 ```
 
-## Usage:
+You can also define configuration parameters for the role module here. This will
+disallow users to overwrite the configuration in hiera:
+
+`manifests/site.pp`:
+
+```puppet
+node 'default' {
+  class {'role':
+    namespace => 'my_roles'
+  }
+}
+```
+
+## Configuration
 
 ### resolve_order
 
@@ -143,7 +163,7 @@ role::search_namespaces:
 When you have (puppet) developers that work on Windows workstations, you
 should prevent using `::` (double colons) in your role names. Using such
 a role (`foo::bar`) in combination with hiera could result in filenames
-with `::` in them. This will effectivly prevent any Windows user from
+with `::` in them. This will effectively prevent any Windows user from
 checking out the repository.
 
 In stead, you can choose any other separator (`__` for example) and
