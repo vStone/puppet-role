@@ -7,3 +7,4 @@ fixtures:
     provision: 'git://github.com/puppetlabs/provision.git'
   symlinks:
     role: "#{source_dir}"
+    my_roles: "#{source_dir}/spec/fixtures/testmodule-my_roles"
