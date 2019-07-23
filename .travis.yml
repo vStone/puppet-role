@@ -41,6 +41,8 @@ branches:
   only:
     - master
     - /^v\d/
+    - develop
+    - /^feature\//
 notifications:
   email: false
 deploy:
