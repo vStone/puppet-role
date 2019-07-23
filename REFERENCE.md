@@ -247,7 +247,7 @@ values from the provided map.
 #### `role::translate_with_map(String $role, Hash[
     Variant[String, Regexp],
     String
-  ] $map)`
+  ] $map, Boolean $strict = false)`
 
 Translate a role by executing a gsubstr(pattern, value, 'G') with patterns and
 values from the provided map.
@@ -269,6 +269,16 @@ Data type: `Hash[
 
 A map with gsubstr translations with key as pattern and value
 as replacement.
+
+##### `strict`
+
+Data type: `Boolean`
+
+Experimental parameter. If enabled, fails the puppet run when
+a role includes characters that are in the target map present as values.
+This would indicate that a role is being provided which would not
+have expected replacement values in use. (This could happen during a migration,
+for example.
 
 ## Data types
 
