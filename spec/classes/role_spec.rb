@@ -112,6 +112,50 @@ describe 'role' do
     end
   end
 
+  context 'translate role callback' do
+    let(:pre_condition) do
+      'class ns::foo::bar::xyz() {}'
+    end
+    let(:trusted_facts) do
+      {
+        'pp_role' => 'foo__bar__xyz',
+      }
+    end
+    let(:params) do
+      {
+        namespace: 'ns',
+        resolve_order: ['trusted'],
+        trusted_extension_name: 'pp_role',
+      }
+    end
+
+    describe 'with function name' do
+      let(:params) do
+        super().merge(translate_role_callback: 'role::translate_double_underscores')
+      end
+
+      it { is_expected.to contain_class('ns::foo::bar::xyz') }
+    end
+
+    describe 'with hash map' do
+      let(:trusted_facts) do
+        {
+          'pp_role' => 'foo__bar//xyz',
+        }
+      end
+      let(:params) do
+        super().merge(
+          translate_role_callback: {
+            '_[_]+' => '::',
+            '/+' => '::',
+          },
+        )
+      end
+
+      it { is_expected.to contain_class('ns::foo::bar::xyz') }
+    end
+  end
+
   context 'namespace configuration' do
     describe 'empty string' do
       let(:pre_condition) do

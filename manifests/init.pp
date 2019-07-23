@@ -24,6 +24,7 @@
 # @param trusted_extension_name Name of the trusted fact (extension).
 # @param fact_name Name of the fact that contains the role.
 # @param function_callback_name A function that returns the role.
+# @param translate_role_callback Optionally, a function name that should be used or a map with gsubstr tuples.
 #
 # @param default_role the default role to assume. Used when no resolve method provides a result.
 # @param default_namespace namespace to use if the default is used.
@@ -38,6 +39,7 @@ class role (
   Optional[String[1]] $trusted_extension_name = undef,
   Optional[String[1]] $fact_name              = undef,
   Optional[String[1]] $function_callback_name = undef,
+  Variant[Undef, String[1], Hash] $translate_role_callback = undef,
 
   Optional[Array[Role::SearchNamespace]] $search_namespaces = undef,
 
@@ -109,13 +111,21 @@ class role (
     $resolved
   }.filter |$value| { $value =~ NotUndef }
 
+  # Nothing was resolved.
   if size($resolve_array) == 0 {
     include "${default_namespace}${default_separator}${default_role}"
   } else {
-    $resolved = $resolve_array[0]
+    $resolved = $translate_role_callback ? {
+      undef   => $resolve_array[0],
+      Hash    => role::translate_with_map($resolve_array[0], $translate_role_callback),
+      default => call($translate_role_callback, $resolve_array[0]),
+    }
+
+    # namespace was provided.
     if $namespace {
       include "${namespace}${separator}${resolved}"
     }
+    # search_namespaces
     else {
       # sanitize the array with namespaces
       $search = role::expand_search_namespaces($separator, $search_namespaces)
