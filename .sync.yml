@@ -14,6 +14,13 @@ Gemfile:
 spec/spec_helper.rb:
   mock_with: ':rspec'
 
+.travis.yml:
+  branches:
+    - master
+    - develop
+    - /^v\d/
+    - /^feature\//
+
 appveyor.yml:
   delete: true
 .gitlab-ci.yml:
