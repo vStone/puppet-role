@@ -17,6 +17,10 @@ spec/spec_helper.rb:
   minimum_code_coverage_percentage: 1.0
 
 .travis.yml:
+  extras:
+    - env: PUPPET_GEM_VERSION="~> 4.0" RUBYGEMS_VERSION="2.7.10" CHECK=parallel_spec
+      rvm: 2.1.9
+      stage: spec
   branches:
     - master
     - develop
