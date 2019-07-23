@@ -1,18 +1,24 @@
 # role
 
+[TOC levels=2-4]: # "#### Table of Contents"
+
 #### Table of Contents
+- [Introduction](#introduction)
+- [Setup](#setup)
+    - [Setup Requirements](#setup-requirements)
+    - [Quickstart](#quickstart)
+- [Usage](#usage)
+    - [resolve_order](#resolve_order)
+    - [search_namespaces](#search_namespaces)
+- [Notes](#notes)
+    - [Windows Users](#windows-users)
+    - [Trusted facts](#trusted-facts)
+- [Development](#development)
 
-1. [Description](#description)
-2. [Setup - The basics of getting started with role](#setup)
-    * [Setup requirements](#setup-requirements)
-    * [Beginning with role](#beginning-with-role)
-3. [Usage - Configuration options](#usage)
-4. [Development - Guide to contributing to the module](#development)
+## Introduction
 
-## Description
-
-This module aims to abstract resolving the correct role for your machine. It supports several ways to
-figure out the role:
+This module aims to abstract resolving the correct role for your
+machine. It supports several ways to figure out the role:
 
 * Use trusted facts
 * Use facts
@@ -21,25 +27,30 @@ figure out the role:
 * Fallback to a default
 * or Fail if there is no role found.
 
-It also allows setting up a waterfall mechanism: no trusted fact? how about a regular one? a param?
+It also allows setting up a waterfall mechanism: no trusted fact? how
+about a regular one? a param?
 
-You can supply the namespace using hiera or use the search_namespaces mechanism.
+
 
 ## Setup
 
 ### Setup Requirements
 
-Depending on how you want to use this module, you will need to learn about:
+Depending on how you want to use this module, you will need to learn
+about:
 * hiera
 * trusted facts
 * (custom) facts
 * writing functions
 
-On a puppet side: we depend on the stdlib module for additional functions.
+On a puppet side: we depend on the stdlib module for additional
+functions.
 
-### Beginning with role
+### Quickstart
 
-Include this in your site.pp
+Include role in your (default) node.
+
+`manifests/site.pp`:
 
 ```puppet
 node 'default' {
@@ -49,12 +60,16 @@ node 'default' {
 
 Configure the namespace to use in hiera:
 
+`hiera/common.yaml`:
+
 ```yaml
 ---
 role::namespace: '::my_roles'
 ```
 
-## Usage
+## Usage:
+
+### resolve_order
 
 Using the resolve order.
 
@@ -87,9 +102,11 @@ role::resolve_order:
 
 ### search_namespaces
 
-It is possible to search for a role in multiple namespaces. To do this, supply an (non-empty) array with namespaces to look in.
+It is possible to search for a role in multiple namespaces. To do this,
+supply an (non-empty) array with namespaces to look in.
 
 By example:
+
 ```yaml
 role::separator: '::'
 role::search_namespaces:
@@ -99,7 +116,8 @@ role::search_namespaces:
   - {customer: '_'}
 ```
 
-The module will attempt to find the following classes (in order) for role `foobar` and use the first one that exists.
+The module will attempt to find the following classes (in order) for
+role `foobar` and use the first one that exists.
 
 - shared_roles::foobar
 - my_roles::foobar
@@ -107,7 +125,8 @@ The module will attempt to find the following classes (in order) for role `fooba
 - customer_foobar
 
 
-**Note**: A namespace parameter will always take precedence. In hiera, you can force a `undef` or `nil` value using `~`.
+**Note**: A namespace parameter will always take precedence. In hiera,
+you can force a `undef` or `nil` value using `~`.
 
 ```yaml
 role::namespace: ~
@@ -117,4 +136,35 @@ role::search_namespaces:
 
 ```
 
+## Notes
+
+### Windows Users
+
+When you have (puppet) developers that work on Windows workstations, you
+should prevent using `::` (double colons) in your role names. Using such
+a role (`foo::bar`) in combination with hiera could result in filenames
+with `::` in them. This will effectivly prevent any Windows user from
+checking out the repository.
+
+In stead, you can choose any other separator (`__` for example) and
+remap the role to a class name using `translate_role_callback`. For role
+`foo__bar`, the following example would result in `myspace::foo::bar`
+being included.
+
+```yaml
+role::namespace: 'myspace'
+role::translate_role_callback: 'role::translate_double_underscores'
+```
+
+### Trusted facts
+
+If you intend to use trusted facts as classification for your roles,
+take the following remarks into account:
+
+* Do not use `trusted` in combination with facts in the `resolve_order`:
+  Facts can easily be overridden on the agent side.
+* Your hiera hierarchy should not use anything besides trusted facts.
+  Same reason applies.
+
 ## Development
+
