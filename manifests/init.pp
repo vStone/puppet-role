@@ -62,7 +62,7 @@ class role (
     fail('Either namespace or a not empty search_namespaces must be provided.')
   }
 
-  $resolve_array = [$resolve_order].flatten.map |String $method| {
+  $resolve_array = [$resolve_order].flatten.reduce([]) |Array[Optional[String]] $found, String $method| {
     case $method {
       'param' : {
         if $role {
@@ -97,18 +97,21 @@ class role (
         }
       }
       'fail': {
-        $tried = $resolve_order.reduce([]) |$tries, $method| {
-          if ($method == 'fail') { break() }
-          $tries + $method
-        }.join(', ')
-        fail("Unable to resolve a role and hard failure requested. Attempted methods: ${tried}.")
+        if $found.filter |$value| { $value =~ NotUndef }.length() == 0 {
+          $tried = $resolve_order.reduce([]) |$tries, $method| {
+            if ($method == 'fail') { break() }
+            $tries + $method
+          }.join(', ')
+          fail("Unable to resolve a role and hard failure requested. Attempted methods: ${tried}.")
+        }
+        break()
       }
       default: {
         $resolved = undef
         break()
       }
     }
-    $resolved
+    $found + [ $resolved ]
   }.filter |$value| { $value =~ NotUndef }
 
   # Nothing was resolved.
