@@ -61,22 +61,33 @@
 
 <h4>Table of Contents</h4>
 
-<ol>
-<li><a href="#label-Description">Description</a></li>
-<li><a href="#label-Setup">Setup - The basics of getting started with role</a>
+<ul>
+<li><a href="#label-Introduction">Introduction</a></li>
+<li><a href="#label-Setup">Setup</a>
 
 <ul>
-<li><a href="#label-Setup+requirements">Setup requirements</a></li>
-<li><a href="#label-Beginning+with+role">Beginning with role</a></li>
+<li><a href="#label-Setup+requirements">Setup Requirements</a></li>
+<li><a href="#label-Quickstart">Quickstart</a></li>
 </ul></li>
-<li><a href="#label-Usage">Usage - Configuration options</a></li>
-<li><a href="#label-Development">Development - Guide to contributing to the module</a></li>
-</ol>
+<li><a href="#label-Usage">Usage</a>
 
-<h2>Description</h2>
+<ul>
+<li><a href="#label-Resolve_order">resolve_order</a></li>
+<li><a href="#label-Search_namespaces">search_namespaces</a></li>
+</ul></li>
+<li><a href="#label-Notes">Notes</a>
 
-<p>This module aims to abstract resolving the correct role for your machine. It supports several ways to
-figure out the role:</p>
+<ul>
+<li><a href="#label-Windows+users">Windows Users</a></li>
+<li><a href="#label-Trusted+facts">Trusted facts</a></li>
+</ul></li>
+<li><a href="#label-Development">Development</a></li>
+</ul>
+
+<h2>Introduction</h2>
+
+<p>This module aims to abstract resolving the correct role for your
+machine. It supports several ways to figure out the role:</p>
 
 <ul>
 <li>Use trusted facts</li>
@@ -87,15 +98,15 @@ figure out the role:</p>
 <li>or Fail if there is no role found.</li>
 </ul>
 
-<p>It also allows setting up a waterfall mechanism: no trusted fact? how about a regular one? a param?</p>
-
-<p>You can supply the namespace using hiera or use the search_namespaces mechanism.</p>
+<p>It also allows setting up a waterfall mechanism: no trusted fact? how
+about a regular one? a param?</p>
 
 <h2>Setup</h2>
 
 <h3>Setup Requirements</h3>
 
-<p>Depending on how you want to use this module, you will need to learn about:</p>
+<p>Depending on how you want to use this module, you will need to learn
+about:</p>
 
 <ul>
 <li>hiera</li>
@@ -104,11 +115,14 @@ figure out the role:</p>
 <li>writing functions</li>
 </ul>
 
-<p>On a puppet side: we depend on the stdlib module for additional functions.</p>
+<p>On a puppet side: we depend on the stdlib module for additional
+functions.</p>
 
-<h3>Beginning with role</h3>
+<h3>Quickstart</h3>
 
-<p>Include this in your site.pp</p>
+<p>Include role in your (default) node.</p>
+
+<p><code>manifests/site.pp</code>:</p>
 
 <pre class="code puppet"><code class="puppet">node &#39;default&#39; {
   include ::role
@@ -117,11 +131,15 @@ figure out the role:</p>
 
 <p>Configure the namespace to use in hiera:</p>
 
+<p><code>hiera/common.yaml</code>:</p>
+
 <pre class="code yaml"><code class="yaml">---
 role::namespace: &#39;::my_roles&#39;
 </code></pre>
 
-<h2>Usage</h2>
+<h2>Usage:</h2>
+
+<h3>resolve_order</h3>
 
 <p>Using the resolve order.</p>
 
@@ -151,7 +169,8 @@ role::default_role: profile_base
 
 <h3>search_namespaces</h3>
 
-<p>It is possible to search for a role in multiple namespaces. To do this, supply an (non-empty) array with namespaces to look in.</p>
+<p>It is possible to search for a role in multiple namespaces. To do this,
+supply an (non-empty) array with namespaces to look in.</p>
 
 <p>By example:</p>
 
@@ -163,7 +182,8 @@ role::search_namespaces:
   - {customer: &#39;_&#39;}
 </code></pre>
 
-<p>The module will attempt to find the following classes (in order) for role <code>foobar</code> and use the first one that exists.</p>
+<p>The module will attempt to find the following classes (in order) for
+role <code>foobar</code> and use the first one that exists.</p>
 
 <ul>
 <li>shared_roles::foobar</li>
@@ -172,7 +192,8 @@ role::search_namespaces:
 <li>customer_foobar</li>
 </ul>
 
-<p><strong>Note</strong>: A namespace parameter will always take precedence. In hiera, you can force a <code>undef</code> or <code>nil</code> value using <code>~</code>.</p>
+<p><strong>Note</strong>: A namespace parameter will always take precedence. In hiera,
+you can force a <code>undef</code> or <code>nil</code> value using <code>~</code>.</p>
 
 <pre class="code yaml"><code class="yaml">role::namespace: ~
 role::search_namespaces:
@@ -180,6 +201,37 @@ role::search_namespaces:
  - {&#39;my_roles&#39;: &#39;::&#39;}
 
 </code></pre>
+
+<h2>Notes</h2>
+
+<h3>Windows Users</h3>
+
+<p>When you have (puppet) developers that work on Windows workstations, you
+should prevent using <code>::</code> (double colons) in your role names. Using such
+a role (<code>foo::bar</code>) in combination with hiera could result in filenames
+with <code>::</code> in them. This will effectivly prevent any Windows user from
+checking out the repository.</p>
+
+<p>In stead, you can choose any other separator (<code>__</code> for example) and
+remap the role to a class name using <code>translate_role_callback</code>. For role
+<code>foo__bar</code>, the following example would result in <code>myspace::foo::bar</code>
+being included.</p>
+
+<pre class="code yaml"><code class="yaml">role::namespace: &#39;myspace&#39;
+role::translate_role_callback: &#39;role::translate_double_underscores&#39;
+</code></pre>
+
+<h3>Trusted facts</h3>
+
+<p>If you intend to use trusted facts as classification for your roles,
+take the following remarks into account:</p>
+
+<ul>
+<li>Do not use <code>trusted</code> in combination with facts in the <code>resolve_order</code>:
+Facts can easily be overridden on the agent side.</li>
+<li>Your hiera hierarchy should not use anything besides trusted facts.
+Same reason applies.</li>
+</ul>
 
 <h2>Development</h2>
 </div></div>
