@@ -10,7 +10,7 @@
 
 **Functions**
 
-* [`role::expand_search_namespaces`](#roleexpand_search_namespaces): Sanitizes Role::SearchNamespaces for use in `role`.  a single map with namespace - separator entries.
+* [`role::expand_search_namespaces`](#roleexpand_search_namespaces): Sanitizes Role::SearchNamespaces for use in `role`.
 * [`role::translate_double_underscores`](#roletranslate_double_underscores): Translates all double (or more) underscores in a role to '::'
 * [`role::translate_slash`](#roletranslate_slash): Translates all (repeated) slashes in a role to '::'
 * [`role::translate_with_map`](#roletranslate_with_map): Translate a role by executing a gsubstr(pattern, value, 'G') with patterns and values from the provided map.
@@ -151,9 +151,7 @@ Dummy default role that does nothing.
 
 Type: Puppet Language
 
-Sanitizes Role::SearchNamespaces for use in `role`.
-
-a single map with namespace - separator entries.
+This function is used to sanitize user input and return a single map with namespace - separator entries.
 
 #### Examples
 
@@ -172,9 +170,7 @@ $expanded = role::expand_search_namespaces('::', $search_namespaces)
 
 #### `role::expand_search_namespaces(String $separator, Variant[Role::SearchNamespace, Array[Role::SearchNamespace]] $search)`
 
-Sanitizes Role::SearchNamespaces for use in `role`.
-
-a single map with namespace - separator entries.
+This function is used to sanitize user input and return a single map with namespace - separator entries.
 
 Returns: `Hash[String, String]` Expanded configuration.
 

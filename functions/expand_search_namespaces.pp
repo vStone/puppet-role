@@ -1,7 +1,6 @@
-# Sanitizes Role::SearchNamespaces for use in `role`.
+# @summary Sanitizes Role::SearchNamespaces for use in `role`.
 #
-# @abstract This function is used to sanitize `Role::SearchNamespace`s and return
-# a single map with namespace - separator entries.
+# This function is used to sanitize user input and return a single map with namespace - separator entries.
 #
 # @example hiera configured namespaces
 #
@@ -12,7 +11,6 @@
 #   ]
 #   $expanded = role::expand_search_namespaces('::', $search_namespaces)
 #   # => {'' => '::', 'my_roles' => '_', 'public_roles' => '::' }
-#
 #
 # @param separator Default separator to use when the namespace does not provide one.
 # @param search `Role::SearchNamespace`s to expand.
