@@ -3,5 +3,5 @@
 # @param role Role to perform translate on.
 # @return [String] Translated role.
 function role::translate_slash(String $role) >> String {
-  $role.regsubst('[/]+', '::', 'G')
+  role::translate_with_map($role, {'[/]+' => '::'})
 }
