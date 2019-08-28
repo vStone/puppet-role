@@ -1,6 +1,6 @@
 {
   "name": "vStone-role",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "author": "Jan Vansteenkiste",
   "summary": "Map roles in different namespaces",
   "license": "MIT",
@@ -18,7 +18,8 @@
       "operatingsystem": "Debian",
       "operatingsystemrelease": [
         "8",
-        "9"
+        "9",
+        "10"
       ]
     },
     {
