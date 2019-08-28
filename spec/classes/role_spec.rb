@@ -112,8 +112,55 @@ describe 'role' do
     end
   end
 
+  context 'translate role callback' do
+    let(:pre_condition) do
+      'class ns::foo::bar::xyz() {}'
+    end
+    let(:trusted_facts) do
+      {
+        'pp_role' => 'foo__bar__xyz',
+      }
+    end
+    let(:params) do
+      {
+        namespace: 'ns',
+        resolve_order: ['trusted'],
+        trusted_extension_name: 'pp_role',
+      }
+    end
+
+    describe 'with function name' do
+      let(:params) do
+        super().merge(translate_role_callback: 'role::translate_double_underscores')
+      end
+
+      it do
+        skip 'Unsupported on puppet 4.x' if Puppet.version =~ %r{^4\.}
+        is_expected.to contain_class('ns::foo::bar::xyz')
+      end
+    end
+
+    describe 'with hash map' do
+      let(:trusted_facts) do
+        {
+          'pp_role' => 'foo__bar//xyz',
+        }
+      end
+      let(:params) do
+        super().merge(
+          translate_role_callback: {
+            '_[_]+' => '::',
+            '/+' => '::',
+          },
+        )
+      end
+
+      it { is_expected.to contain_class('ns::foo::bar::xyz') }
+    end
+  end
+
   context 'namespace configuration' do
-    describe 'empty' do
+    describe 'empty string' do
       let(:pre_condition) do
         'class foo::bar() {}'
       end
@@ -131,18 +178,18 @@ describe 'role' do
 
     describe 'provided' do
       let(:pre_condition) do
-        'class my_namespace::bar() {}'
+        'class my_namespace::foo::bar() {}'
       end
 
       let(:params) do
         {
           namespace: 'my_namespace',
           resolve_order: ['param', 'default'],
-          role: 'bar',
+          role: 'foo::bar',
         }
       end
 
-      it { is_expected.to contain_class('my_namespace::bar') }
+      it { is_expected.to contain_class('my_namespace::foo::bar') }
     end
   end
 
@@ -283,25 +330,61 @@ describe 'role' do
       end
 
       it do
+        skip 'Unsupported in puppet 4.x' if Puppet.version =~ %r{^4\.}
         is_expected.to contain_class('my_roles::function_role')
       end
     end
   end
 
   context 'resolve ordering' do
-    context 'skip until match is found' do
+    describe 'skip until match is found' do
       let(:params) do
         super().merge(
-          resolve_order: ['trusted', 'fact', 'param', 'callback'],
+          resolve_order: ['trusted', 'fact', 'param', 'default'],
           role: 'param_role',
           trusted_extension_name: 'pp_role',
           fact_name: 'role',
-          function_callback_name: 'my_roles::role_callback',
         )
       end
 
       it do
         is_expected.to contain_class('my_roles::param_role')
+      end
+    end
+
+    context 'with fail' do
+      describe 'it fails when no match is found' do
+        let(:params) do
+          super().merge(
+            resolve_order: ['trusted', 'fact', 'fail', 'param'],
+            role: 'param_role',
+            trusted_extension_name: 'pp_role',
+            fact_name: 'role',
+          )
+        end
+
+        it do
+          is_expected.to compile.and_raise_error(%r{Attempted methods: trusted, fact\.})
+        end
+      end
+
+      describe 'it does not fail with a match' do
+        let(:params) do
+          super().merge(
+            resolve_order: ['trusted', 'fact', 'fail', 'param'],
+            role: 'param_role',
+            trusted_extension_name: 'pp_role',
+            fact_name: 'role',
+          )
+        end
+        let(:facts) do
+          { role: 'fact_role' }
+        end
+
+        it do
+          is_expected.to compile
+          is_expected.to contain_class('my_roles::fact_role')
+        end
       end
     end
 
@@ -342,21 +425,6 @@ describe 'role' do
         it do
           is_expected.to contain_class('my_roles::param_role')
         end
-      end
-    end
-
-    describe 'stop when fail is in the ordering' do
-      let(:params) do
-        super().merge(
-          resolve_order: ['trusted', 'fact', 'fail'],
-          role: 'param_role',
-          trusted_extension_name: 'pp_role',
-          fact_name: 'role',
-        )
-      end
-
-      it do
-        is_expected.to compile.and_raise_error(%r{Attempted methods: trusted, fact\.})
       end
     end
   end

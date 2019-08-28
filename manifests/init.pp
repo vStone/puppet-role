@@ -16,7 +16,7 @@
 #   * `trusted`: Use a trusted fact. The name must be configured using `trusted_extension_name`.
 #   * `fact`: Use a fact. The name must be configured using `fact_name`.
 #   * `param`: Uses the provided `role` parameter. This can also be used to configure using hiera.
-#   * `callback`: Use a function callback. The function must be configured using `function_callback_name`.
+#   * `callback`: Use a function callback. The function must be configured using `function_callback_name`. (Not available on puppet 4.x!)
 #   * `default`: Fall back to the default value. You would typically put this after other methods.
 #   * `fail`: Fail the run if this method is reached. This enforces setting up a role and skips using the default role.
 #
@@ -24,6 +24,11 @@
 # @param trusted_extension_name Name of the trusted fact (extension).
 # @param fact_name Name of the fact that contains the role.
 # @param function_callback_name A function that returns the role.
+# @param translate_role_callback Optionally, a function name that should be used or a map with gsubstr tuples.
+#   * function name: A puppet function to call.
+#       It should accept a single value and return a string. (Not available on puppet 4.x!)
+#       See `role::translate_slash` and `role::translate_double_underscores` for examples.
+#   * a Hash: A mapping with keypairs that is passed to `role::translate_with_map`.
 #
 # @param default_role the default role to assume. Used when no resolve method provides a result.
 # @param default_namespace namespace to use if the default is used.
@@ -38,6 +43,7 @@ class role (
   Optional[String[1]] $trusted_extension_name = undef,
   Optional[String[1]] $fact_name              = undef,
   Optional[String[1]] $function_callback_name = undef,
+  Variant[Undef, String[1], Hash] $translate_role_callback = undef,
 
   Optional[Array[Role::SearchNamespace]] $search_namespaces = undef,
 
@@ -60,7 +66,7 @@ class role (
     fail('Either namespace or a not empty search_namespaces must be provided.')
   }
 
-  $resolve_array = [$resolve_order].flatten.map |String $method| {
+  $resolve_array = [$resolve_order].flatten.reduce([]) |Array[Optional[String]] $found, String $method| {
     case $method {
       'param' : {
         if $role {
@@ -95,27 +101,38 @@ class role (
         }
       }
       'fail': {
-        $tried = $resolve_order.reduce([]) |$tries, $method| {
-          if ($method == 'fail') { break() }
-          $tries + $method
-        }.join(', ')
-        fail("Unable to resolve a role and hard failure requested. Attempted methods: ${tried}.")
+        if $found.filter |$value| { $value =~ NotUndef }.length() == 0 {
+          $tried = $resolve_order.reduce([]) |$tries, $method| {
+            if ($method == 'fail') { break() }
+            $tries + $method
+          }.join(', ')
+          fail("Unable to resolve a role and hard failure requested. Attempted methods: ${tried}.")
+        }
+        break()
       }
       default: {
         $resolved = undef
         break()
       }
     }
-    $resolved
+    $found + [ $resolved ]
   }.filter |$value| { $value =~ NotUndef }
 
+  # Nothing was resolved.
   if size($resolve_array) == 0 {
     include "${default_namespace}${default_separator}${default_role}"
   } else {
-    $resolved = $resolve_array[0]
+    $resolved = $translate_role_callback ? {
+      undef   => $resolve_array[0],
+      Hash    => role::translate_with_map($resolve_array[0], $translate_role_callback),
+      default => call($translate_role_callback, $resolve_array[0]),
+    }
+
+    # namespace was provided.
     if $namespace {
       include "${namespace}${separator}${resolved}"
     }
+    # search_namespaces
     else {
       # sanitize the array with namespaces
       $search = role::expand_search_namespaces($separator, $search_namespaces)

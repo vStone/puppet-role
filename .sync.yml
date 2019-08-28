@@ -1,8 +1,26 @@
 ---
+Gemfile:
+  optional:
+    ':development':
+      - gem: awesome_print
+      - gem: puppet-lint-leading_zero-check
+      - gem: puppet-lint-trailing_comma-check
+      - gem: puppet-lint-version_comparison-check
+      - gem: puppet-lint-param-docs
+      - gem: puppet-lint-unquoted_string-check
+    ':documentation':
+      - gem: redcarpet
+
 spec/spec_helper.rb:
   mock_with: ':rspec'
+  coverage_report: true
+  minimum_code_coverage_percentage: 1.0
 
 .travis.yml:
+  extras:
+    - env: PUPPET_GEM_VERSION="~> 4.0" RUBYGEMS_VERSION="2.7.10" CHECK=parallel_spec
+      rvm: 2.1.9
+      stage: spec
   branches:
     - master
     - develop
@@ -16,3 +34,14 @@ appveyor.yml:
 .gitignore:
   paths:
     - vendor/
+
+Rakefile:
+  extras:
+    - |
+      Rake::Task['rubocop'].clear
+      RuboCop::RakeTask.new(:rubocop) do |task|
+        task.options = [
+          '--config', '.rubocop.yml'
+        ]
+      end
+

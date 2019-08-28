@@ -1,5 +1,5 @@
 ---
-dist: trusty
+dist: xenial
 language: ruby
 cache: bundler
 before_install:
@@ -37,6 +37,10 @@ matrix:
     -
       env: DEPLOY_TO_FORGE=yes
       stage: deploy
+    -
+      env: PUPPET_GEM_VERSION="~> 4.0" RUBYGEMS_VERSION="2.7.10" CHECK=parallel_spec
+      rvm: 2.1.9
+      stage: spec
 branches:
   only:
     - master
@@ -45,12 +49,3 @@ branches:
     - /^feature\//
 notifications:
   email: false
-deploy:
-  provider: puppetforge
-  user: puppet
-  password:
-    secure: ""
-  on:
-    tags: true
-    all_branches: true
-    condition: "$DEPLOY_TO_FORGE = yes"
