@@ -48,7 +48,7 @@ class role (
   Optional[Array[Role::SearchNamespace]] $search_namespaces = undef,
 
   String $default_role      = 'default',
-  String $default_namespace = '::role',
+  String $default_namespace = 'role',
   String $default_separator = '::',
 ) {
 
