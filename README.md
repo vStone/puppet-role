@@ -48,7 +48,7 @@ functions.
 ### Compatibility
 
 Most functionality should be usable with > puppet 4.x with
-the exception of features that depend on #call().
+the exception of features that depend on #call():
 
 * `callback` in `role::resolve_order` is not supported on puppet < 5.x
 * using a function name as `role::translate_role_callback` is not supported on puppet < 5.x
@@ -71,7 +71,7 @@ Configure the namespace to use in hiera:
 
 ```yaml
 ---
-role::namespace: '::my_roles'
+role::namespace: 'my_roles'
 ```
 
 You can also define configuration parameters for the role module here. This will
@@ -95,7 +95,7 @@ Using the resolve order.
 
 ```yaml
 ---
-role::namespace: '::my_roles'
+role::namespace: 'my_roles'
 role::resolve_order:
   - trusted
   - fact
