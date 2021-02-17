@@ -54,13 +54,19 @@ class role (
 
   # Check if the required 'configuration' is present
   if 'trusted' in $resolve_order {
-    assert_type(String[1], $trusted_extension_name)
+    assert_type(String[1], $trusted_extension_name) |$_exp, $_actual| {
+      fail('You should specify the trusted_extension_name when trusted is used in the resolve_array')
+    }
   }
   if 'fact' in $resolve_order {
-    assert_type(String[1], $fact_name)
+    assert_type(String[1], $fact_name) |$_exp, $_actual| {
+      fail('You should specify the fact_name when fact is used in the resolve_array')
+    }
   }
   if 'callback' in $resolve_order {
-    assert_type(String[1], $function_callback_name)
+    assert_type(String[1], $function_callback_name) |$_exp, $_actual| {
+      fail('You should specify the function_callback_name when callback is used in the resolve_array')
+    }
   }
   unless $namespace or ($search_namespaces and size($search_namespaces) > 0) {
     fail('Either namespace or a not empty search_namespaces must be provided.')
