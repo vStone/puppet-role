@@ -1,0 +1,4 @@
+moduledir 'modules/upstream'
+
+mod 'puppetlabs/stdlib'
+mod 'vStone/role
