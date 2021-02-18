@@ -34,6 +34,7 @@ appveyor.yml:
 .gitignore:
   paths:
     - vendor/
+    - .vagrant/
 
 Rakefile:
   extras:
