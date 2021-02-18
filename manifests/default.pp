@@ -7,8 +7,8 @@ class role::default {
     Looks this node is using the default role. This means that the role module
     probably not has been properly initialized.
 
-    You should override the default_prefix with your own prefix and optionally
-    supply a default_role.
+    You should override the `default_prefix` parameter with your own prefix and
+    optionally supply a default_role.
     ==============================
     | - USAGE
   }
