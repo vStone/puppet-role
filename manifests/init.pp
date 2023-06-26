@@ -77,7 +77,7 @@ class role (
         }
       }
       'fact': {
-        if $fact_name and has_key($::facts, $fact_name) {
+        if $fact_name and $fact_name in $::facts {
           $resolved = $::facts[$fact_name]
         }
         else {
@@ -93,7 +93,7 @@ class role (
         }
       }
       'trusted': {
-        if $trusted_extension_name and has_key($::trusted['extensions'], $trusted_extension_name) {
+        if $trusted_extension_name and $trusted_extension_name in $::trusted['extensions'] {
           $resolved = $::trusted['extensions'][$trusted_extension_name]
         }
         else {
