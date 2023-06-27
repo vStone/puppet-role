@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.configure do |c|
   c.mock_with :rspec
 end
@@ -29,16 +31,34 @@ default_fact_files.each do |f|
   end
 end
 
+# read default_facts and merge them over what is provided by facterdb
+default_facts.each do |fact, value|
+  add_custom_fact fact, value
+end
+
 RSpec.configure do |c|
   c.default_facts = default_facts
   c.before :each do
     # set to strictest setting for testing
     # by default Puppet runs at warning level
     Puppet.settings[:strict] = :warning
+    Puppet.settings[:strict_variables] = true
   end
   c.filter_run_excluding(bolt: true) unless ENV['GEM_BOLT']
   c.after(:suite) do
     RSpec::Puppet::Coverage.report!(1.0)
+  end
+
+  # Filter backtrace noise
+  backtrace_exclusion_patterns = [
+    %r{spec_helper},
+    %r{gems},
+  ]
+
+  if c.respond_to?(:backtrace_exclusion_patterns)
+    c.backtrace_exclusion_patterns = backtrace_exclusion_patterns
+  elsif c.respond_to?(:backtrace_clean_patterns)
+    c.backtrace_clean_patterns = backtrace_exclusion_patterns
   end
 end
 
