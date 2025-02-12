@@ -104,7 +104,7 @@ describe 'role' do
           end
 
           it do
-            is_expected.to compile.and_raise_error(%r{expects a String value})
+            is_expected.to compile.and_raise_error(%r{You should specify the (trusted_extension_name|fact_name|function_callback_name) when (trusted|fact|callback) is used})
           end
         end
       end
