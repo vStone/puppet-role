@@ -19,8 +19,6 @@ function role::expand_search_namespaces(
   String $separator,
   Variant[Role::SearchNamespace, Array[Role::SearchNamespace]] $search,
 ) >> Hash[String, String] {
-
-
   $namespaces = [$search].flatten.unique.reduce({}) |Hash[String, String] $memo, Role::SearchNamespace $space| {
     if $space =~ String {
       $memo + { $space => $separator }
@@ -33,7 +31,7 @@ function role::expand_search_namespaces(
           undef   => $separator,
           default => $value,
         }
-        $memo + { $key =>  $_value }
+        $memo + { $key => $_value }
       }
     }
   }
