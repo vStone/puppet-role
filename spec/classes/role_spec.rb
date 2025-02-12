@@ -40,7 +40,6 @@ describe 'role' do
         'search_namespaces' => { search_namespaces: ['other_namespace', 'my_roles'] },
         'both' => { namespace: 'my_roles', search_namespaces: ['other_namespace', 'other2'] },
       }.each do |provided, parms|
-
         describe "#{provided} provided" do
           let(:params) do
             super().merge(parms)
@@ -135,7 +134,7 @@ describe 'role' do
       end
 
       it do
-        skip 'Unsupported on puppet 4.x' if Puppet.version =~ %r{^4\.}
+        skip 'Unsupported on puppet 4.x' if %r{^4\.}.match?(Puppet.version)
         is_expected.to contain_class('ns::foo::bar::xyz')
       end
     end
@@ -330,7 +329,7 @@ describe 'role' do
       end
 
       it do
-        skip 'Unsupported in puppet 4.x' if Puppet.version =~ %r{^4\.}
+        skip 'Unsupported in puppet 4.x' if %r{^4\.}.match?(Puppet.version)
         is_expected.to contain_class('my_roles::function_role')
       end
     end
