@@ -51,7 +51,6 @@ class role (
   String $default_namespace = 'role',
   String $default_separator = '::',
 ) {
-
   # Check if the required 'configuration' is present
   if 'trusted' in $resolve_order {
     assert_type(String[1], $trusted_extension_name) |$_exp, $_actual| {
@@ -121,7 +120,7 @@ class role (
         break()
       }
     }
-    $found + [ $resolved ]
+    $found + [$resolved]
   }.filter |$value| { $value =~ NotUndef }
 
   # Nothing was resolved.

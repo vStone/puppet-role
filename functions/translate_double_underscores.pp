@@ -3,5 +3,5 @@
 # @param role Role to perform translate on.
 # @return [String] Translated role.
 function role::translate_double_underscores(String $role) >> String {
-  role::translate_with_map($role, {/_[_]+/ => '::' })
+  role::translate_with_map($role, { /_[_]+/ => '::' })
 }
