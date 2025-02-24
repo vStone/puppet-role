@@ -1,1 +1,3 @@
-class my_roles() { }
+# @summary test role
+class my_roles () {
+}
