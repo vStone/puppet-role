@@ -61,7 +61,7 @@ Include role in your (default) node.
 
 ```puppet
 node 'default' {
-  include ::role
+  include role
 }
 ```
 
@@ -81,7 +81,7 @@ disallow users to overwrite the configuration in hiera:
 
 ```puppet
 node 'default' {
-  class {'role':
+  class { 'role':
     namespace => 'my_roles'
   }
 }
